@@ -12,6 +12,7 @@ env:
   ECS_SERVICE: savannah-orders-service
   ECS_CLUSTER: savannah-orders-cluster
   ECS_TASK_DEFINITION: savannah-orders-api
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
 jobs:
   test:
