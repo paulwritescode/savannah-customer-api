@@ -80,7 +80,7 @@ jobs:
     
     - name: Run security scan
       run: |
-        safety check --file requirements.txt
+        safety scan --file requirements.txt
 
   build-test:
     runs-on: ubuntu-latest
