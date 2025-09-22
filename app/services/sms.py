@@ -29,7 +29,7 @@ class SMSService:
             
             # Try real API call first
             try:
-                url = "https://api.africastalking.com/version1/messaging/bulk"
+                url = "https://api.sandbox.africastalking.com/version1/messaging"
                 headers = {
                     'Accept': 'application/json',
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -41,14 +41,14 @@ class SMSService:
                 data = {
                     "username": self.username,
                     "message": message,
-                    "phoneNumbers": phone_number  # Single phone number as string
+                    "to": phone_number  # Changed from phoneNumbers to to
                 }
                 
                 # URL encode the data properly
                 encoded_data = urlencode(data)
                 response = requests.post(url, headers=headers, data=encoded_data)
                 
-                if response.status_code == 200:
+                if response.status_code in [200, 201]:  # 201 is also success for SMS
                     response_data = response.json()
                     logger.info(f"📱 SMS sent successfully to {phone_number}: {response_data}")
                     print(f"\n📱 SMS NOTIFICATION SENT (REAL):")
