@@ -1,0 +1,30 @@
+# Core FastAPI and server
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Database and ORM
+sqlalchemy>=2.0.25
+
+# Data validation and settings
+pydantic==2.11.9
+pydantic-settings==2.1.0
+email-validator==2.3.0
+
+# Authentication
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.6
+passlib[bcrypt]==1.7.4
+
+# HTTP client and SMS
+httpx==0.25.2
+africastalking==1.2.5
+
+# Environment and utilities
+python-dotenv==1.0.0
+
+# Development and testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+black==23.11.0
+flake8==6.1.0

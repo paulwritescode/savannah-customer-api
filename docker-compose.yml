@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  savannah-orders-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./data/savannah_orders.db
+      - SECRET_KEY=your-secret-key-for-development-only
+      - OIDC_ISSUER=https://dev-example.auth0.com/
+      - OIDC_CLIENT_ID=example-client-id
+      - OIDC_CLIENT_SECRET=example-client-secret
+      - AT_USERNAME=sandbox
+      - AT_API_KEY=your-africas-talking-api-key
+      - AT_SENDER_ID=SAVANNAH
+      - DEBUG=true
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
