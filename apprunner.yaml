@@ -3,7 +3,7 @@ runtime: docker
 build:
   commands:
     build:
-      - echo "Building Savannah Orders API"
+      - echo "Building Savannah Orders API with Docker"
       - docker build -t savannah-orders-api .
 run:
   runtime-version: latest
@@ -18,3 +18,13 @@ run:
       value: "sqlite:///./data/savannah_orders.db"
     - name: PYTHONPATH
       value: "/app"
+    - name: SECRET_KEY
+      value: "your-production-secret-key-change-this"
+    - name: AT_USERNAME
+      value: "sandbox"
+    - name: AT_API_KEY
+      value: "your-africas-talking-api-key"
+    - name: AT_SENDER_ID
+      value: "SAVANNAH"
+    - name: DEBUG
+      value: "false"

@@ -2,6 +2,38 @@
 
 ## 🚀 Deploy to AWS App Runner
 
+### Configuration File Approach
+This project uses the **configuration file approach** where App Runner reads all settings from `apprunner.yaml` in your repository root. This is the recommended approach because:
+
+- ✅ **Version controlled**: Configuration is stored in your repository
+- ✅ **Automatic**: No manual configuration needed in AWS Console
+- ✅ **Consistent**: Same configuration across environments
+- ✅ **Easy updates**: Change configuration by updating the file
+
+### Understanding apprunner.yaml
+The `apprunner.yaml` file contains all the configuration App Runner needs:
+
+```yaml
+version: 1.0
+runtime: docker                    # Use Docker runtime
+build:
+  commands:
+    build:
+      - docker build -t savannah-orders-api .  # Build command
+run:
+  runtime-version: latest
+  command: uvicorn app.main:app --host 0.0.0.0 --port 8000  # Start command
+  network:
+    port: 8000                    # Port to expose
+    env: PORT                     # Environment variable for port
+  env:                           # Environment variables
+    - name: DATABASE_URL
+      value: "sqlite:///./data/savannah_orders.db"
+    - name: SECRET_KEY
+      value: "your-production-secret-key-change-this"
+    # ... more environment variables
+```
+
 ### Prerequisites
 1. AWS Account with appropriate permissions
 2. GitHub repository with your code
@@ -16,33 +48,26 @@ git push origin main
 
 ### Step 2: Create App Runner Service
 
-#### Option A: Using AWS Console (Recommended)
+#### Option A: Using AWS Console with Configuration File (Recommended)
 1. Go to [AWS App Runner Console](https://console.aws.amazon.com/apprunner/)
 2. Click "Create service"
 3. Choose "Source": "Source code repository"
 4. Connect your GitHub account
 5. Select your repository: `savanah`
 6. Choose branch: `main`
-7. Configure build settings:
-   - **Build command**: `docker build -t savannah-orders-api .`
-   - **Start command**: `uvicorn app.main:app --host 0.0.0.0 --port 8000`
-8. Configure service settings:
-   - **Service name**: `savannah-orders-api`
-   - **Port**: `8000`
-   - **Environment variables** (add these):
-     ```
-     DATABASE_URL=sqlite:///./data/savannah_orders.db
-     SECRET_KEY=your-production-secret-key-here
-     AT_USERNAME=sandbox
-     AT_API_KEY=your-africas-talking-api-key
-     DEBUG=false
-     ```
-9. Click "Create & deploy"
+7. **Important**: Leave "Source directory" empty (uses root directory)
+8. Choose "Configuration file" for build settings
+9. **App Runner will automatically read from `apprunner.yaml`**
+10. Configure service settings:
+    - **Service name**: `savannah-orders-api`
+    - **Auto deployments**: Enable for automatic deployment on push
+11. Click "Create & deploy"
 
-#### Option B: Using AWS CLI
+**Note**: App Runner will automatically use the configuration from `apprunner.yaml` in your repository root.
+
+#### Option B: Using AWS CLI with Configuration File
 ```bash
-# Create apprunner.yaml (already created)
-# Then create the service
+# App Runner will automatically read from apprunner.yaml
 aws apprunner create-service \
   --service-name savannah-orders-api \
   --source-configuration '{
@@ -54,12 +79,7 @@ aws apprunner create-service \
         "Value": "main"
       },
       "CodeConfiguration": {
-        "ConfigurationSource": "REPOSITORY",
-        "CodeConfigurationValues": {
-          "Runtime": "DOCKER",
-          "BuildCommand": "docker build -t savannah-orders-api .",
-          "StartCommand": "uvicorn app.main:app --host 0.0.0.0 --port 8000"
-        }
+        "ConfigurationSource": "REPOSITORY"
       }
     }
   }' \
@@ -75,17 +95,15 @@ aws apprunner create-service \
 3. Under "Source", enable "Auto deployments"
 4. This will automatically deploy on every push to main branch
 
-### Step 4: Set Environment Variables
+### Step 4: Update Environment Variables (Optional)
+**Note**: Environment variables are already configured in `apprunner.yaml`. If you need to override them:
+
 1. Go to your App Runner service
 2. Click "Configuration" tab
-3. Under "Environment variables", add:
+3. Under "Environment variables", you can override the values from `apprunner.yaml`:
    ```
-   DATABASE_URL=sqlite:///./data/savannah_orders.db
    SECRET_KEY=your-secure-production-secret-key
-   AT_USERNAME=sandbox
-   AT_API_KEY=your-africas-talking-api-key
-   AT_SENDER_ID=SAVANNAH
-   DEBUG=false
+   AT_API_KEY=your-actual-africas-talking-api-key
    ```
 
 ### Step 5: Access Your API
