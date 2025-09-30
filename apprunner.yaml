@@ -6,8 +6,7 @@ build:
       - echo "Building Savannah Orders API with Docker"
       - docker build -t savannah-orders-api .
 run:
-  runtime-version: latest
-  command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+  command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
   network:
     port: 8000
     env: PORT

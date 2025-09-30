@@ -61,6 +61,9 @@ git push origin main
 10. Configure service settings:
     - **Service name**: `savannah-orders-api`
     - **Auto deployments**: Enable for automatic deployment on push
+    - **Instance configuration**: 
+      - **vCPU**: 0.25 (recommended for this project)
+      - **Memory**: 0.5 GB (sufficient for SQLite + FastAPI)
 11. Click "Create & deploy"
 
 **Note**: App Runner will automatically use the configuration from `apprunner.yaml` in your repository root.
