@@ -43,7 +43,10 @@ class SMSService:
                 data = {
                     "username": self.username,
                     "message": message,
-                    "to": [phone_number]  # Changed from phoneNumbers to to
+                    "to": phone_number,  # Single phone number as string
+                    "from": self.sender_id or "AFRICASTKNG",  # Sender ID
+                    "bulkSMSMode": 1,  # Default value for bulk SMS
+                    "enqueue": 1  # Enable queuing for better performance
                 }
 
                 # URL encode the data properly
