@@ -1,83 +1,40 @@
 # Savannah Orders API
 
-A simple Python FastAPI service for managing customers and orders with SMS notifications.
+A simple Python FastAPI service for managing customers and orders with automatic SMS notifications.
 
-## 🎯 Requirements Fulfilled
+## ✅ Requirements Fulfilled
 
-### 1. ✅ Simple Python Service
-- **FastAPI** web framework with automatic API documentation
-- **SQLite** database for simple data storage
-- **Clean architecture** with separated concerns
-
-### 2. ✅ Simple Database Design
-- **Customers Table**: `id`, `name`, `code`, `phone_number`, `email`, `created_at`, `updated_at`
-- **Orders Table**: `id`, `customer_id`, `item`, `amount`, `time`, `created_at`, `updated_at`
-- **SQLite** for easy setup and development
-
-### 3. ✅ REST API
-- **Customers API**: Create, read, update, delete customers
-- **Orders API**: Create, read, update, delete orders
-- **JSON responses** with proper HTTP status codes
-- **Input validation** using Pydantic schemas
-
-### 4. ✅ OpenID Connect Authentication
-- **Full OpenID Connect** implementation with discovery endpoints
-- **JWT token-based** authentication with standard claims
-- **Scope-based authorization** (read/write permissions)
-- **Bearer token** authentication for all endpoints
-- **OIDC Discovery** at `/.well-known/openid_configuration`
-- **JWKS endpoint** at `/.well-known/jwks.json`
-- **OAuth2 token endpoint** at `/oauth/token`
-
-### 5. ✅ SMS Notifications
-- **Africa's Talking** SMS integration
-- **Automatic SMS** sent when orders are created
-- **Background task** processing for SMS
-- **Graceful fallback** to simulation mode
-
-### 6. ✅ Unit Tests & CI/CD
-- **Pytest** test framework
-- **80%+ test coverage**
-- **GitHub Actions** CI/CD pipeline
-- **Automated testing** on push/PR
-
-### 7. ✅ Documentation
-- **Comprehensive README** with setup instructions
-- **API documentation** at `/docs`
-- **Code comments** and type hints
-- **GitHub repository** ready for hosting
+1. **Simple Python Service** - FastAPI with SQLite database
+2. **Simple Database Design** - Customers and Orders tables
+3. **REST API** - Full CRUD operations for customers and orders
+4. **OpenID Connect Authentication** - JWT-based auth with OIDC discovery
+5. **SMS Notifications** - Automatic SMS via Africa's Talking when orders are created
+6. **Unit Tests & CI/CD** - 85% test coverage with GitHub Actions
+7. **Documentation** - Complete setup and API documentation
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.8+
+- Python 3.11+
 - pip
 
 ### Installation
 
-1. **Clone the repository**
+1. **Clone and setup**
 ```bash
 git clone <repository-url>
 cd savanah
-```
-
-2. **Create virtual environment**
-```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies**
-```bash
 pip install -r requirements.txt
 ```
 
-4. **Run the application**
+2. **Run the application**
 ```bash
 python -m uvicorn app.main:app --reload
 ```
 
-5. **Access the API**
+3. **Access the API**
 - **API Documentation**: http://localhost:8000/docs
 - **Health Check**: http://localhost:8000/health
 
@@ -85,39 +42,15 @@ python -m uvicorn app.main:app --reload
 
 ### Authentication
 
-#### OpenID Connect Discovery
-The API implements full OpenID Connect standards:
-
-- **Discovery Endpoint**: `GET /.well-known/openid_configuration`
-- **JWKS Endpoint**: `GET /.well-known/jwks.json`
-- **Token Endpoint**: `POST /oauth/token`
-
-#### Get Access Token
+Get an access token:
 ```bash
-# Get token from OAuth2 endpoint
 curl -X POST http://localhost:8000/oauth/token
 ```
 
-#### Programmatic Token Creation
-```python
-from app.services.auth import auth_service
-
-# Create a test token with OpenID Connect claims
-token = auth_service.create_access_token({
-    'sub': 'test-user',
-    'scopes': ['read', 'write']
-})
+Use the token in API requests:
+```bash
+curl -H "Authorization: Bearer <your-token>" http://localhost:8000/api/v1/customers/
 ```
-
-#### Token Structure
-The JWT tokens include standard OpenID Connect claims:
-- `iss` (issuer)
-- `aud` (audience) 
-- `sub` (subject)
-- `iat` (issued at)
-- `exp` (expiration)
-- `nbf` (not before)
-- `scopes` (custom scopes)
 
 ### Create Customer
 ```bash
@@ -127,8 +60,7 @@ curl -X POST http://localhost:8000/api/v1/customers/ \
   -d '{
     "name": "John Doe",
     "code": "CUST001",
-    "phone_number": "+254700123456",
-    "email": "john@example.com"
+    "phone_number": "+254700123456"
   }'
 ```
 
@@ -141,7 +73,7 @@ curl -X POST http://localhost:8000/api/v1/orders/ \
     "customer_id": "customer-id",
     "item": "iPhone 15",
     "amount": 120000.00,
-    "time": "2025-09-22T12:00:00"
+    "time": "2025-01-22T12:00:00"
   }'
 ```
 
@@ -153,56 +85,27 @@ pytest tests/ -v --cov=app --cov-report=html
 ```
 
 ### Test Coverage
-- **80%+ coverage** achieved
+- **85% coverage** achieved
 - **Unit tests** for all endpoints
 - **Authentication tests**
 - **SMS service tests**
 
 ## 📊 Database Schema
 
-### Customers
-```sql
-CREATE TABLE customers (
-    id VARCHAR(36) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    code VARCHAR(50) UNIQUE NOT NULL,
-    phone_number VARCHAR(20) NOT NULL,
-    email VARCHAR(255),
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME
-);
-```
+**Customers**: `id`, `name`, `code`, `phone_number`, `email`, `created_at`, `updated_at`
 
-### Orders
-```sql
-CREATE TABLE orders (
-    id VARCHAR(36) PRIMARY KEY,
-    customer_id VARCHAR(36) NOT NULL,
-    item VARCHAR(255) NOT NULL,
-    amount FLOAT NOT NULL,
-    time DATETIME NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME,
-    FOREIGN KEY (customer_id) REFERENCES customers(id)
-);
-```
+**Orders**: `id`, `customer_id`, `item`, `amount`, `time`, `created_at`, `updated_at`
+
+SQLite database automatically created on first run.
 
 ## 🔧 Configuration
 
-### Environment Variables
+Environment variables (all optional, defaults provided):
 ```bash
-# Database
 DATABASE_URL=sqlite:///./savannah_orders.db
-
-# Security
 SECRET_KEY=your-secret-key
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-
-# Africa's Talking SMS
 AT_USERNAME=sandbox
 AT_API_KEY=your-api-key
-AT_SENDER_ID=SAVANNAH
 ```
 
 ## 📱 SMS Integration
@@ -210,88 +113,49 @@ AT_SENDER_ID=SAVANNAH
 ### Africa's Talking Setup
 1. Create account at [Africa's Talking](https://africastalking.com)
 2. Get API key from dashboard
-3. Update configuration with your credentials
-4. SMS will be sent automatically when orders are created
+3. Update `AT_API_KEY` in config
+4. SMS sent automatically when orders are created
 
 ### SMS Features
 - **Automatic sending** on order creation
-- **Background processing** for better performance
+- **Background processing** for performance
 - **Phone number formatting** for Kenya (+254)
 - **Graceful fallback** to simulation mode
 
 ## 🏗️ Architecture
 
-```
-app/
-├── main.py              # FastAPI application
-├── config.py            # Configuration settings
-├── database.py          # Database connection
-├── models/              # SQLAlchemy models
-│   ├── customer.py
-│   └── order.py
-├── schemas/             # Pydantic schemas
-│   ├── customer.py
-│   └── order.py
-├── routers/             # API endpoints
-│   ├── customers.py
-│   └── orders.py
-└── services/            # Business logic
-    ├── auth.py
-    └── sms.py
-```
+Simple structure with clear separation:
+- `app/main.py` - FastAPI application
+- `app/models/` - Database models (Customer, Order)
+- `app/routers/` - API endpoints
+- `app/services/` - Business logic (Auth, SMS)
+- `tests/` - Unit tests
 
 ## 🚀 Deployment
 
 ### Local Development
 ```bash
-# Direct Python
 python -m uvicorn app.main:app --reload
+```
 
-# Docker Compose (with SQLite)
+### Docker
+```bash
+docker build -t savannah-orders-api .
+docker run -p 8000:8000 savannah-orders-api
+```
+
+### Docker Compose
+```bash
 docker-compose up --build
 ```
 
-### Production Deployment
-
-#### Docker
-```bash
-# Build image
-docker build -t savannah-orders-api .
-
-# Run container
-docker run -p 8000:8000 \
-  -e DATABASE_URL=sqlite:///./data/savannah_orders.db \
-  -e SECRET_KEY=your-secret-key \
-  -v $(pwd)/data:/app/data \
-  savannah-orders-api
-```
-
-#### AWS ECS (with SQLite + EFS)
-```bash
-# Deploy infrastructure
-cd infrastructure
-terraform init
-terraform plan
-terraform apply
-
-# Deploy application
-./scripts/deploy.sh
-```
-
-#### Key Features:
-- **SQLite database** with EFS persistence
-- **No PostgreSQL** required
-- **Simplified deployment** process
-- **EFS mount** for data persistence
-- **Auto-scaling** ECS Fargate
-
 ## 📈 CI/CD Pipeline
 
-The project includes GitHub Actions for:
+GitHub Actions workflow includes:
 - **Automated testing** on push/PR
-- **Code quality checks**
-- **Test coverage reporting**
-- **Deployment readiness**
+- **Code quality checks** with flake8
+- **Test coverage** reporting
+- **Docker build** testing
 
 ## 🤝 Contributing
 
@@ -300,14 +164,6 @@ The project includes GitHub Actions for:
 3. Make your changes
 4. Add tests
 5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🆘 Support
-
-For support, please open an issue in the GitHub repository.
 
 ---
 

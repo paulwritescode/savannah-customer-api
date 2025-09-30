@@ -6,6 +6,7 @@ class OrderBase(BaseModel):
     item: str
     amount: float
     time: datetime
+    description: str  # New required field
 
 class OrderCreate(OrderBase):
     customer_id: str

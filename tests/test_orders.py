@@ -17,7 +17,8 @@ def test_create_order(client: TestClient, auth_headers):
         "customer_id": customer_id,
         "item": "Laptop",
         "amount": 50000.00,
-        "time": datetime.now().isoformat()
+        "time": datetime.now().isoformat(),
+        "description": "High-end laptop for business use"
     }
     
     response = client.post("/api/v1/orders/", json=order_data, headers=auth_headers)
@@ -33,7 +34,8 @@ def test_create_order_invalid_customer(client: TestClient, auth_headers):
         "customer_id": "550e8400-e29b-41d4-a716-446655440000",  # Non-existent UUID
         "item": "Phone",
         "amount": 25000.00,
-        "time": datetime.now().isoformat()
+        "time": datetime.now().isoformat(),
+        "description": "Smartphone for personal use"
     }
     
     response = client.post("/api/v1/orders/", json=order_data, headers=auth_headers)
@@ -59,7 +61,8 @@ def test_get_orders_by_customer(client: TestClient, auth_headers):
         "customer_id": customer_id,
         "item": "Tablet",
         "amount": 30000.00,
-        "time": datetime.now().isoformat()
+        "time": datetime.now().isoformat(),
+        "description": "Tablet for entertainment"
     }
     client.post("/api/v1/orders/", json=order_data, headers=auth_headers)
     
@@ -85,7 +88,8 @@ def test_get_order_by_id(client: TestClient, auth_headers):
         "customer_id": customer_id,
         "item": "Smartphone",
         "amount": 40000.00,
-        "time": datetime.now().isoformat()
+        "time": datetime.now().isoformat(),
+        "description": "Latest smartphone model"
     }
     order_response = client.post("/api/v1/orders/", json=order_data, headers=auth_headers)
     order_id = order_response.json()["id"]
@@ -112,7 +116,8 @@ def test_update_order(client: TestClient, auth_headers):
         "customer_id": customer_id,
         "item": "Old Item",
         "amount": 10000.00,
-        "time": datetime.now().isoformat()
+        "time": datetime.now().isoformat(),
+        "description": "Old item description"
     }
     order_response = client.post("/api/v1/orders/", json=order_data, headers=auth_headers)
     order_id = order_response.json()["id"]
@@ -140,7 +145,8 @@ def test_delete_order(client: TestClient, auth_headers):
         "customer_id": customer_id,
         "item": "To Delete",
         "amount": 5000.00,
-        "time": datetime.now().isoformat()
+        "time": datetime.now().isoformat(),
+        "description": "Item to be deleted"
     }
     order_response = client.post("/api/v1/orders/", json=order_data, headers=auth_headers)
     order_id = order_response.json()["id"]

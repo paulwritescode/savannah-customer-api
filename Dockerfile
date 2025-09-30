@@ -21,9 +21,10 @@ RUN mkdir -p /app/data
 # Set environment variables for SQLite
 ENV DATABASE_URL=sqlite:///./data/savannah_orders.db
 ENV PYTHONPATH=/app
+ENV PORT=8000
 
 # Expose port
-EXPOSE 8000
+EXPOSE $PORT
 
 # Run the application
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
