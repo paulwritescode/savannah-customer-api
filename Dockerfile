@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY app/ ./app/
@@ -21,10 +21,10 @@ RUN mkdir -p /app/data
 # Set environment variables for SQLite
 ENV DATABASE_URL=sqlite:///./data/savannah_orders.db
 ENV PYTHONPATH=/app
-ENV PORT=8000
+ENV PORT=8080
 
 # Expose port
 EXPOSE $PORT
 
 # Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python3", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
